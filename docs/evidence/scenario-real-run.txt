@@ -1,0 +1,11 @@
+실제 Supabase DB와 실제 OpenRouter 무료 모델로 연습용 시나리오 3개를 돌린 결과 (2026-10-22)
+실행: REAL_AI=1 python scripts/real_db_scenarios.py (나눠 준 쉬움.csv, 중간.csv, 어려움.csv를 그대로 올림)
+
+쉬움.csv 명단 일치, 8 명
+중간.csv 명단 일치, 12 명
+어려움.csv 명단 일치, 16 명
+test_easy 통과 | 배정: AI 2차 모델(recursive/flint-v1.0:free) | 시도: 1차 시간 초과(120.0초), 2차 성공(53.6초)
+test_middle 통과 | 배정: AI 2차 모델(recursive/flint-v1.0:free) | 시도: 1차 호출 오류(118.8초), 2차 성공(28.3초)
+test_hard 통과 | 배정: AI 2차 모델(recursive/flint-v1.0:free) | 시도: 1차 시간 초과(120.0초), 2차 성공(35.5초)
+
+(어려움은 처음 돌렸을 때 확정 직전에 일시적인 인터넷 오류(DB 주소를 찾지 못함)로 멈춰서, DB 재연결을 고친 뒤 어려움만 다시 돌린 결과이다.)
