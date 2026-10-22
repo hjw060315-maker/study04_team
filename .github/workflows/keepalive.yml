@@ -1,0 +1,23 @@
+# Supabase 무료 프로젝트가 일시정지되지 않도록 매일 DB에 질의를 보낸다(공고 3장 어려운 해결).
+# 저장소 Settings > Secrets and variables > Actions에 DATABASE_URL을 같은 이름으로 넣어야 동작한다.
+name: keepalive
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - run: pip install psycopg2-binary
+      - env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python - <<'PY'
+          import os, psycopg2
+          conn = psycopg2.connect(os.environ["DATABASE_URL"], connect_timeout=15)
+          cur = conn.cursor()
+          cur.execute("select count(*) from tf_settings")
+          print("ok")
+          conn.close()
+          PY
