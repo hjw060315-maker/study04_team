@@ -4,7 +4,7 @@ import sys
 import zipfile
 
 student_no = sys.argv[1]
-files = subprocess.check_output(["git", "ls-files"], text=True, encoding="utf-8").split("\n")
+files = subprocess.check_output(["git", "ls-files", "-z"]).decode("utf-8").split("\0")  # -z: 한글 파일 이름을 그대로 받는다
 files = [f for f in files if f]
 bad = [f for f in files if f == ".env" or f.endswith("secrets.toml")]
 if bad:
