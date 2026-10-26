@@ -1,0 +1,46 @@
+# 배포한 Streamlit 앱이 12시간 접속이 없어 잠들지 않도록 4시간마다 실제 브라우저로 앱을 연다.
+# 앱이 이미 잠들어 있으면 "Yes, get this app back up" 버튼을 눌러 깨운다.
+name: keep-app-awake
+on:
+  schedule:
+    - cron: "23 */4 * * *"
+  workflow_dispatch:
+jobs:
+  visit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - run: |
+          pip install playwright
+          playwright install --with-deps chromium
+      - run: |
+          python - <<'PY'
+          import re, sys
+          from playwright.sync_api import sync_playwright
+
+          URL = "https://study04team-nngmetfdepnmbfzyuggurf.streamlit.app/"
+          with sync_playwright() as p:
+              browser = p.chromium.launch()
+              page = browser.new_page()
+              page.goto(URL, timeout=90000)
+              page.wait_for_timeout(8000)
+              wake = page.get_by_role("button", name=re.compile("get this app back up", re.I))
+              if wake.count():
+                  print("앱이 잠들어 있어 깨움")
+                  wake.first.click()
+                  page.wait_for_timeout(60000)
+              ok = False
+              for _ in range(12):  # 앱 화면(iframe 안)에 제목이 나올 때까지 최대 약 60초 기다림
+                  for frame in page.frames:
+                      try:
+                          if "팀 편성" in frame.inner_text("body", timeout=2000):
+                              ok = True
+                      except Exception:
+                          pass
+                  if ok:
+                      break
+                  page.wait_for_timeout(5000)
+              browser.close()
+          print("앱 화면 확인:", "ok" if ok else "실패")
+          sys.exit(0 if ok else 1)
+          PY
