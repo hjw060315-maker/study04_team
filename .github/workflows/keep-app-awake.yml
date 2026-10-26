@@ -8,13 +8,13 @@ on:
 jobs:
   visit:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 8
     steps:
       - run: |
           pip install playwright
           playwright install --with-deps chromium
       - run: |
-          python - <<'PY'
+          timeout 240 python -u - <<'PY'
           import re, sys
           from playwright.sync_api import sync_playwright
 
@@ -22,7 +22,9 @@ jobs:
           with sync_playwright() as p:
               browser = p.chromium.launch()
               page = browser.new_page()
-              page.goto(URL, timeout=90000)
+              print("앱 주소 여는 중")
+              page.goto(URL, timeout=60000, wait_until="domcontentloaded")
+              print("주소 열림")
               page.wait_for_timeout(8000)
               wake = page.get_by_role("button", name=re.compile("get this app back up", re.I))
               if wake.count():
@@ -40,7 +42,7 @@ jobs:
                   if ok:
                       break
                   page.wait_for_timeout(5000)
-              browser.close()
-          print("앱 화면 확인:", "ok" if ok else "실패")
+              print("앱 화면 확인:", "ok" if ok else "실패", flush=True)
+              sys.stdout.flush()
           sys.exit(0 if ok else 1)
           PY
