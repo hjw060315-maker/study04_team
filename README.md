@@ -21,7 +21,7 @@ https://study04team-nngmetfdepnmbfzyuggurf.streamlit.app/
 | AI 응답이 늦을 때 | 어려운 해결: 모델마다 120초 전체 대기 시간을 직접 재서 끊고 다음 모델로 넘어감(`src/assign.py`의 `call_with_deadline`) |
 | 3차 모델까지 실패 | 어려운 해결: 앱이 모든 경우를 따져 5가지 검사를 통과하는 배정을 찾음(`src/assign.py`의 `solve`) |
 | AI 대기 중 화면 | 어려운 해결: 몇 차 모델의 응답을 몇 초째 기다리는지 `assign_status`에 보여 줌 |
-| DB 일시정지 막기 | 어려운 해결: GitHub Actions(`.github/workflows/keepalive.yml`)가 매일 DB에 질의를 보냄. 저장소 Settings > Secrets and variables > Actions에 `DATABASE_URL`을 등록해야 동작함 |
+| DB 일시정지 막기 | 어려운 해결: GitHub Actions(`.github/workflows/keepalive.yml`)가 매일 DB에 질의를 보냄. 저장소 Actions 시크릿에 `DATABASE_URL`을 등록해 두었고, 수동 실행으로 성공(초록 체크)을 확인함 |
 | 앱 잠들지 않게 하기 | GitHub Actions(`.github/workflows/keep-app-awake.yml`)가 4시간마다 실제 브라우저로 배포 앱을 열어 12시간 무접속 잠들기를 막음(잠들어 있으면 깨움) |
 
 ## 4. 쓴 모델 3개
